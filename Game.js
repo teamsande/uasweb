@@ -1,52 +1,99 @@
+var game = new Phaser.Game(1100, 600, Phaser.AUTO, 'game');
 
-BasicGame.Game = function (game) {
+      //  The core game loop
 
-	//	When a State is added to Phaser it automatically has the following properties set on it, even if they already exist:
+   var PhaserGame = function () {
 
-    this.game;		//	a reference to the currently running game
-    this.add;		//	used to add sprites, text, groups, etc
-    this.camera;	//	a reference to the game camera
-    this.cache;		//	the game cache
-    this.input;		//	the global input manager (you can access this.input.keyboard, this.input.mouse, as well from it)
-    this.load;		//	for preloading assets
-    this.math;		//	lots of useful common math operations
-    this.sound;		//	the sound manager - add a sound, play one, set-up markers, etc
-    this.stage;		//	the game stage
-    this.time;		//	the clock
-    this.tweens;    //  the tween manager
-    this.state;	    //	the state manager
-    this.world;		//	the game world
-    this.particles;	//	the particle manager
-    this.physics;	//	the physics manager
-    this.rnd;		//	the repeatable random number generator
+       this.background = null;
+       this.foreground = null;
 
-    //	You can use any of these from any function within this State.
-    //	But do consider them as being 'reserved words', i.e. don't create a property for your own game called "world" or you'll over-write the world reference.
+       this.player = null;
+       this.cursors = null;
+       this.speed = 300;
 
-};
+       this.weapons = [];
+       this.currentWeapon = 0;
+       this.weaponName = null;
 
-BasicGame.Game.prototype = {
+   };
 
-	create: function () {
+   PhaserGame.prototype = {
 
-		//	Honestly, just about anything could go here. It's YOUR game after all. Eat your heart out!
+       init: function () {
 
-	},
+           this.game.renderer.renderSession.roundPixels = true;
 
-	update: function () {
+           this.physics.startSystem(Phaser.Physics.ARCADE);
 
-		//	Honestly, just about anything could go here. It's YOUR game after all. Eat your heart out!
+       },
 
-	},
 
-	quitGame: function (pointer) {
+   preload: function () {
 
-		//	Here you should destroy anything you no longer need.
-		//	Stop music, delete sprites, purge caches, free resources, all that good stuff.
+              this.load.image('player', 'assets/ship.png');
 
-		//	Then let's go back to the main menu.
-		this.state.start('MainMenu');
+              this.load.image('bullet5', 'assets/bullet5.png');
 
-	}
+          },
 
-};
+          create: function () {
+
+                      this.weapons.push(new Weapon.ScatterShot(this.game));
+
+                      this.currentWeapon = 0;
+
+                      for (var i = 1; i < this.weapons.length; i++)
+                      {
+                          this.weapons[i].visible = false;
+                      }
+
+                      this.player = this.add.sprite(64, 200, 'player');
+                      this.player.anchor.setTo(0.5,0.5);
+                      this.player.angle += 270;
+
+                      this.physics.arcade.enable(this.player);
+
+                      this.player.body.collideWorldBounds = true;
+
+                      this.foreground = this.add.tileSprite(0, 0, this.game.width, this.game.height, 'foreground');
+                      this.foreground.autoScroll(-60, 0);
+
+
+                      this.cursors = this.input.keyboard.createCursorKeys();
+
+                      this.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
+
+                  },
+
+          update: function () {
+
+           this.player.body.velocity.set(0);
+
+           if (this.cursors.left.isDown)
+           {
+               this.player.body.velocity.x = -this.speed;
+           }
+           else if (this.cursors.right.isDown)
+           {
+               this.player.body.velocity.x = this.speed;
+           }
+
+           if (this.cursors.up.isDown)
+           {
+               this.player.body.velocity.y = -this.speed;
+           }
+           else if (this.cursors.down.isDown)
+           {
+               this.player.body.velocity.y = this.speed;
+           }
+
+           if (this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
+           {
+               this.weapons[this.currentWeapon].fire(this.player);
+           }
+
+       }
+
+   };
+
+   game.state.add('Game', PhaserGame, true);
