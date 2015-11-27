@@ -8,11 +8,14 @@ var game = new Phaser.Game(1100, 600, Phaser.AUTO, 'game');
        this.foreground = null;
 
        this.player = null;
+        this.boss = null;
        this.cursors = null;
        this.speed = 300;
 
        this.weapons = [];
+       this.patterns = [];
        this.currentWeapon = 0;
+       this.currentPattern = 0;
        this.weaponName = null;
 
    };
@@ -31,6 +34,7 @@ var game = new Phaser.Game(1100, 600, Phaser.AUTO, 'game');
    preload: function () {
 
               this.load.image('player', 'assets/ship.png');
+              this.load.image('boss', 'assets/ship.png');
 
               this.load.image('bullet5', 'assets/bullet5.png');
 
@@ -39,24 +43,25 @@ var game = new Phaser.Game(1100, 600, Phaser.AUTO, 'game');
           create: function () {
 
                       this.weapons.push(new Weapon.ScatterShot(this.game));
+                      this.patterns.push(new BossWeapon.ScatterShot(this.game));
 
                       this.currentWeapon = 0;
+                      this.currentPattern = 0;
 
-                      for (var i = 1; i < this.weapons.length; i++)
+                      for (var i = 1; i < this.patterns.length; i++)
                       {
-                          this.weapons[i].visible = false;
+                          this.patterns[i].visible = false;
                       }
 
                       this.player = this.add.sprite(64, 200, 'player');
+                      this.boss = this.add.sprite(550, 0, 'boss');
                       this.player.anchor.setTo(0.5,0.5);
                       this.player.angle += 270;
 
                       this.physics.arcade.enable(this.player);
+                      this.physics.arcade.enable(this.boss);
 
                       this.player.body.collideWorldBounds = true;
-
-                      this.foreground = this.add.tileSprite(0, 0, this.game.width, this.game.height, 'foreground');
-                      this.foreground.autoScroll(-60, 0);
 
 
                       this.cursors = this.input.keyboard.createCursorKeys();
@@ -89,8 +94,10 @@ var game = new Phaser.Game(1100, 600, Phaser.AUTO, 'game');
 
            if (this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
            {
-               this.weapons[this.currentWeapon].fire(this.player);
+               this.weapons[0].fire(this.player);
            }
+
+           this.patterns[this.currentPattern].fire(this.boss);
 
        }
 
