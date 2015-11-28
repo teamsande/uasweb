@@ -1,4 +1,5 @@
 var game = new Phaser.Game(1100, 600, Phaser.AUTO, 'game');
+var count = 0;
 
       //  The core game loop
 
@@ -44,14 +45,12 @@ var game = new Phaser.Game(1100, 600, Phaser.AUTO, 'game');
 
                       this.weapons.push(new Weapon.ScatterShot(this.game));
                       this.patterns.push(new BossWeapon.ScatterShot(this.game));
+                      this.patterns.push(new BossWeapon.RingShot(this.game));
+                      this.patterns.push(new BossWeapon.SweepingShot(this.game));
 
                       this.currentWeapon = 0;
                       this.currentPattern = 0;
 
-                      for (var i = 1; i < this.patterns.length; i++)
-                      {
-                          this.patterns[i].visible = false;
-                      }
 
                       this.player = this.add.sprite(64, 200, 'player');
                       this.boss = this.add.sprite(550, 0, 'boss');
@@ -71,6 +70,7 @@ var game = new Phaser.Game(1100, 600, Phaser.AUTO, 'game');
                   },
 
           update: function () {
+            count++;
 
            this.player.body.velocity.set(0);
 
@@ -95,6 +95,11 @@ var game = new Phaser.Game(1100, 600, Phaser.AUTO, 'game');
            if (this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
            {
                this.weapons[0].fire(this.player);
+           }
+
+           if(count > 200){
+             count =  0;
+             this.currentPattern = this.game.rnd.between(0,this.patterns.length-1);
            }
 
            this.patterns[this.currentPattern].fire(this.boss);
