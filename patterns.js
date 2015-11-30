@@ -9,12 +9,11 @@ BossWeapon.ScatterShot = function (game) {
        this.fireRate = 20;
        this.bullets = game.add.physicsGroup();
        this.currentBullet = 0;
-       this.maxBullet = 100
+       this.maxBullet = 100;
 
        for (var i = 0; i < this.maxBullet; i++)
        {
-           this.bullets.add(new BossBullet(game, 'bullet5'), true);
-           //this.game.physics.arcade.enable(BossBullet);
+           this.bullets.add(new BossBullet(game, 'bullet'), true);
        }
 
        return this;
@@ -53,12 +52,11 @@ BossWeapon.ScatterShot = function (game) {
 
           this.bullets = game.add.physicsGroup();
           this.currentBullet = 0;
-          this.maxBullet = 500;
+          this.maxBullet = 250;
 
           for (var i = 0; i < this.maxBullet; i++)
           {
-              this.bullets.add(new BossBullet(game, 'bullet5'), true);
-              //this.game.physics.arcade.enable(BossBullet);
+              this.bullets.add(new BossBullet(game, 'bullet'), true);
           }
 
           return this;
@@ -76,14 +74,14 @@ BossWeapon.ScatterShot = function (game) {
           var x = source.x + 5;
           var ang = this.game.rnd.between(30,10);
 
-          for (var n = 0; n < 28; n ++)
+          for (var n = 0; n < 14; n ++)
           {
             this.bullets.children[this.currentBullet].fire(x, y, ang, this.bulletSpeed, 0, 0);
             this.currentBullet ++;
             if (this.currentBullet >= this.maxBullet){
               this.currentBullet = 0;
             }
-            ang += 5;
+            ang += 10;
           }
 
           this.nextFire = this.game.time.time + this.fireRate;
@@ -109,9 +107,9 @@ BossWeapon.ScatterShot = function (game) {
 
              for (var i = 0; i < this.maxBullet; i++)
              {
-                 this.bullets.add(new BossBullet(game, 'bullet5'), true);
-                 //this.game.physics.arcade.enable(BossBullet);
+                 this.bullets.add(new BossBullet(game, 'bullet'), true);
              }
+
 
              return this;
 
@@ -127,7 +125,6 @@ BossWeapon.ScatterShot = function (game) {
 
              var y = source.y + 16;
              var x = source.x + 5;
-             //var x = (source.x + source.width / 2) + this.game.rnd.between(-7, 7) - 20;
 
             if(this.shoot == true){
               this.bullets.children[this.currentBullet].fire(x, y, this.ang, this.bulletSpeed, 0, 0);
@@ -140,7 +137,7 @@ BossWeapon.ScatterShot = function (game) {
              if(this.ang > 170 || this.ang < 10){
                this.diff = this.diff * -1;
              }
-             if(this.count > 60 && this.shoot == true){
+             if(this.count > this.game.rnd.between(47,70)&& this.shoot == true){
                this.shoot = false;
                this.count = 0;
              }
@@ -155,3 +152,76 @@ BossWeapon.ScatterShot = function (game) {
              this.nextFire = this.game.time.time + this.fireRate;
 
          };
+
+
+         BossWeapon.StraightShot = function (game) {
+
+                Phaser.Group.call(this, game, game.world, 'boss straight Shot', false, true, Phaser.Physics.ARCADE);
+
+                this.nextFire = 0;
+                this.bulletSpeed = 300;
+                this.fireRate = 100;
+                this.bullets = game.add.physicsGroup();
+                this.currentBullet = 0;
+                this.maxBullet = 400;
+
+                for (var i = 0; i < this.maxBullet; i++)
+                {
+                    this.bullets.add(new BossBullet(game, 'bullet'), true);
+                }
+
+
+                return this;
+
+            };
+
+            BossWeapon.StraightShot.prototype = Object.create(Phaser.Group.prototype);
+            BossWeapon.StraightShot.prototype.constructor = BossWeapon.StraightShot;
+
+            BossWeapon.StraightShot.prototype.fire = function (source) {
+
+                if (this.game.time.time < this.nextFire) { return; }
+
+                var y = source.y + 16;
+                var x = source.x + 5;
+                var ang = 90;
+
+                this.bullets.children[this.currentBullet].fire(x, y, ang, this.bulletSpeed, 0, 0);
+                this.currentBullet ++;
+                if (this.currentBullet >= this.maxBullet){
+                  this.currentBullet = 0;
+                }
+                this.bullets.children[this.currentBullet].fire(x, y, ang+30, this.bulletSpeed, 0, 0);
+                this.currentBullet ++;
+                if (this.currentBullet >= this.maxBullet){
+                  this.currentBullet = 0;
+                }
+                this.bullets.children[this.currentBullet].fire(x, y, ang-30, this.bulletSpeed, 0, 0);
+                this.currentBullet ++;
+                if (this.currentBullet >= this.maxBullet){
+                  this.currentBullet = 0;
+                }
+                this.bullets.children[this.currentBullet].fire(x, y, ang+60, this.bulletSpeed, 0, 0);
+                this.currentBullet ++;
+                if (this.currentBullet >= this.maxBullet){
+                  this.currentBullet = 0;
+                }
+                this.bullets.children[this.currentBullet].fire(x, y, ang-60, this.bulletSpeed, 0, 0);
+                this.currentBullet ++;
+                if (this.currentBullet >= this.maxBullet){
+                  this.currentBullet = 0;
+                }
+                this.bullets.children[this.currentBullet].fire(x, y, ang+80, this.bulletSpeed, 0, 0);
+                this.currentBullet ++;
+                if (this.currentBullet >= this.maxBullet){
+                  this.currentBullet = 0;
+                }
+                this.bullets.children[this.currentBullet].fire(x, y, ang-80, this.bulletSpeed, 0, 0);
+                this.currentBullet ++;
+                if (this.currentBullet >= this.maxBullet){
+                  this.currentBullet = 0;
+                }
+
+                this.nextFire = this.game.time.time + this.fireRate;
+
+            };

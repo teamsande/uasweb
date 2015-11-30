@@ -6,11 +6,14 @@ Weapon.ScatterShot = function (game) {
 
        this.nextFire = 0;
        this.bulletSpeed = 500;
-       this.fireRate = 50;
+       this.fireRate = 100;
+       this.bullets = game.add.physicsGroup();
+       this.currentBullet = 0;
+       this.maxBullet = 100;
 
-       for (var i = 0; i < 400; i++)
+       for (var i = 0; i < this.maxBullet; i++)
        {
-           this.add(new Bullet(game, 'bullet5'), true);
+           this.bullets.add(new Bullet(game, 'bullet'), true);
        }
 
        return this;
@@ -24,12 +27,30 @@ Weapon.ScatterShot = function (game) {
 
        if (this.game.time.time < this.nextFire) { return; }
 
-       var y = source.y + 16;
+       var y = source.y - 5;
        var x = source.x + 5;
        //var x = (source.x + source.width / 2) + this.game.rnd.between(-7, 7) - 20;
        var ang = this.game.rnd.between(265,275);
+       var tinter;
 
-       this.getFirstExists(false).fire(x, y, ang, this.bulletSpeed, 0, 0);
+       if (damage == 1){
+         tinter = 0xffff00;
+       }
+       if (damage == 2){
+         tinter = 0x00ff00;
+       }
+       if (damage == 3){
+         tinter = 0xff00ff;
+       }
+       if (damage > 3){
+         tinter = 0x0000ff;
+       }
+
+       this.bullets.children[this.currentBullet].fire(x, y, ang, this.bulletSpeed, 0, 0, tinter);
+       this.currentBullet ++;
+       if (this.currentBullet >= this.maxBullet){
+         this.currentBullet = 0;
+       }
 
        this.nextFire = this.game.time.time + this.fireRate;
 
