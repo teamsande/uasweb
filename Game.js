@@ -9,8 +9,6 @@ var iamalive = 0;
 var opaque = 0;
 var timetodeath = 0;
 var t;
-var HPTime;
-var stringt;
 
 
       //  The core game loop
@@ -66,15 +64,10 @@ var stringt;
           },
 
           create: function () {
-                      timetodeath = 60000;
-	              
-                      this.HPTime = this.add.text(this.world.centerX+450, this.world.centerY-270, timetodeath, {
-                        font: "32px Arial",
-                        fill: "#ff0044",
-                        align: "center"
-                      });
-                      this.scoreText = this.add.bitmapText(30, 35, 'gem', score, 32);
+                      timetodeath = 60;
 
+                      this.scoreText = this.add.bitmapText(30 , 550, 'gem', score, 32);
+                      this.HPTime = this.add.bitmapText(1000 , 550, 'gem', 'bloop', 32);
 
                       this.stage.backgroundColor = 0x020b33;
 
@@ -89,7 +82,7 @@ var stringt;
                       this.currentPattern = 0;
 
 
-                      this.player = this.add.sprite(64, 200, 'player');
+                      this.player = this.add.sprite(550, 500, 'player');
                       this.player.texture.baseTexture.scaleMode = PIXI.scaleModes.NEAREST;
                       this.player.scale.set(0.3);
                       this.boss = this.add.sprite(550, 100, 'boss');
@@ -115,22 +108,23 @@ var stringt;
                       this.temptext[i].body.velocity.y = -50;
                     }
 
-
-
                   },
 
           update: function () {
 
             this.scoreText.text = score;
-            timetodeath--;
+            this.acum += this.time.elapsed;
+
+            if(this.acum > (61 - timetodeath) * 1000){
+              timetodeath--;
+            }
             if(timetodeath>=0) {
             this.HPTime.text = timetodeath;
-            console.log(this.time.elapsed);
             count++;
-            this.acum += this.time.elapsed;
-            if(this.acum > timer + 10000){
+
+            if(this.acum > timer + 5000){
               damage++;
-              timer += 10000;
+              timer += 5000;
             }
 
            this.player.body.velocity.set(0);
@@ -171,7 +165,7 @@ var stringt;
            if(this.physics.arcade.overlap(this.player, this.patterns[i].bullets, null, null, this) && this.player.alive == true){
              damage = 1;
              this.player.alive = false;
-             timer = this.time.acum;
+             timer = this.acum;
            }
          }
 
