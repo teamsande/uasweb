@@ -9,6 +9,8 @@ var iamalive = 0;
 var opaque = 0;
 var timetodeath = 0;
 var t;
+var state = 0;
+var playername = "";
 
 
       //  The core game loop
@@ -18,6 +20,19 @@ var t;
         score += dealt;
         ammo.kill();
 
+    };
+
+    function keyRelease (chr) {
+      if(chr.key == "Backspace"){
+        playername = "";
+      }
+      if(chr.keyCode >= 48 && chr.keyCode <= 90){
+        playername += chr.key;
+      }
+      if(chr.key == "Enter"){
+        state ++;
+        //tembak ke databasenya sini
+      }
     };
 
    var PhaserGame = function () {
@@ -64,10 +79,16 @@ var t;
           },
 
           create: function () {
+
+                      this.input.keyboard.addCallbacks(this, null, keyRelease, null);
                       timetodeath = 60;
 
                       this.scoreText = this.add.bitmapText(30 , 550, 'gem', score, 32);
                       this.HPTime = this.add.bitmapText(1000 , 550, 'gem', 'bloop', 32);
+                      this.gameovertext = this.add.bitmapText(300 , 200, 'gem', 'After an epic(not really) battle \n you finally died \n but at least you dealt \n' + score +'\n Damage to the boss', 32);
+                      this.gameovertext.align = 'center';
+                      this.gameovertext.visible = false;
+                      this.name = this.add.bitmapText(400 , 450, 'gem', '', 32);
 
                       this.stage.backgroundColor = 0x020b33;
 
@@ -112,13 +133,20 @@ var t;
 
           update: function () {
 
+
+            if(this.acum > 1000 && state == 0){
+              this.acum = 0;
+              state ++;
+              this.acum = 0;
+
+            }
             this.scoreText.text = score;
             this.acum += this.time.elapsed;
 
+            if(state == 1){
             if(this.acum > (61 - timetodeath) * 1000){
               timetodeath--;
             }
-            if(timetodeath>=0) {
             this.HPTime.text = timetodeath;
             count++;
 
@@ -207,8 +235,39 @@ var t;
 
            }
 
+           if(timetodeath == 0){
+             state++;
+             this.player.body.velocity.set(0);
+             this.player.alive = false;
+             this.boss.body.acceleration.x = 0;
+             this.boss.body.velocity.x = 0;
+             playername = "";
+           }
        }
+
+       if(state == 2){
+       if(this.player.alive == false){
+         iamalive++;
+         if(iamalive % 30 == 0 && opaque == 0){
+           opaque = 1;
+         }
+         else if(iamalive % 30 == 0 && opaque == 1){
+           opaque = 0;
+         }
+         this.player.alpha = opaque;
+       }
+       this.gameovertext.visible = true;
+       this.gameovertext.text = 'After an epic(not really) battle \n you finally died \n but at least you dealt \n' + score +'\n Damage to the boss \n (go ahead type in your name) \n';
+       this.name.text = playername;
+
+
      }
+
+     if(state == 3){
+       this.gameovertext.text = 'You will be remembered \n' + playername + '\n as the one who dealt \n' + score + '\n points of damage to the boss';
+       this.name.visible = false;
+     }
+   }
    };
 
    game.state.add('Game', PhaserGame, true);
