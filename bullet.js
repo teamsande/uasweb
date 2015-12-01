@@ -19,10 +19,12 @@ var Bullet = function (game, key) {
        Bullet.prototype = Object.create(Phaser.Sprite.prototype);
    Bullet.prototype.constructor = Bullet;
 
-   Bullet.prototype.fire = function (x, y, angle, speed, gx, gy) {
+   Bullet.prototype.fire = function (x, y, angle, speed, gx, gy, tint) {
 
        gx = gx || 0;
        gy = gy || 0;
+
+       this.tint = tint;
 
        this.reset(x, y);
        this.scale.set(1);
